@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/cachilders/battleship/issues"
   },
-  "homepage": "https://github.com/cachilders/battleship#readme"
+  "homepage": "https://github.com/cachilders/battleship#readme",
+  "devDependencies": {}
 }
