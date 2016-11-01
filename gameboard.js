@@ -5,14 +5,14 @@ function Theater(n) {
       player    : 'One',
       plays     : this.nMatrix(n),
       kills     : [],
-      fleet     : this.fleet.slice(),
+      fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     },
     two: {
       player    : 'Two',
       plays     : this.nMatrix(n),
       kills     : [],
-      fleet     : this.fleet.slice(),
+      fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     }
   };
@@ -150,7 +150,7 @@ Theater.prototype.format = function(player) {
     '   '.repeat(player.plays.length - 5) +
     ' ║ ' +
     'YOUR SHIPS: '
-    + player.fleet.length +
+    + player.fleet.filter(boat => boat[1] > 0).length +
     '   '.repeat(player.plays.length - 5) +
     ' ║\n' +
     '╚' +
@@ -170,34 +170,34 @@ Theater.prototype.print = function(player) {
 Theater.prototype.fire = function(x, y, player) {
   let offense = this.players[player];
   let defense = this.players[player === 'one' ? 'two' : 'one'];
-  let target = defense.placement[y][x];
   let max = defense.placement.length - 1;
+  let target;
   if ((x > max || x < 0) || (y > max || y < 0)) {
     return ['Those coordinates could use some work. Try again.', 0];
-  } else if (offense.plays[y][x] > 0) {
+  } else {
+    target = defense.placement[y][x];
+  }
+  if (offense.plays[y][x] > 0) {
     return ['Already Taken. Try again.', 0];
   } else if (target === 0) {
     offense.plays[y][x] = 1; // The shot tracker uses a trinary marker
     return ['Miss.', 1];
   } else if (target > 0) {
-    offense.plays[y][x] = 2; // 0 === Null; 1 === Miss; 2 === Hit
     let ship = defense.fleet[target - 1];
+    offense.plays[y][x] = 2; // 0 === Null; 1 === Miss; 2 === Hit
     ship[1] -= 1;
     if (ship[1] > 0) {
       return ['Hit! Good show!', 1];
-    } else if (defense.fleet.length > 0) {
-      offense.kills.push(ship[0]);
-      defense.fleet = defense.fleet.slice(0, target - 1)
-        .concat(defense.fleet.slice(target));
+    } else if (defense.fleet.filter(boat => boat[1] > 0).length > 0) {
+      offense.kills = defense.fleet.filter(boat => boat[1] === 0);
       return ['Sunk! Nice, it was a ' + ship[0] + '.', 1];
     } else {
-      offense.kills.push(ship[0]);
-      defense.fleet = [];
+      offense.kills = defense.fleet.filter(boat => boat[1] === 0);
+      this.print(player);
       return ['Win! You\'ve destroyed the enemy\'s last ship, a ' +
         ship[0] + '.', 2];
     }
   }
-  return ['Check your premises. Something went wrong.', 0];
 };
 
 module.exports = size => new Theater(size);
