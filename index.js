@@ -23,12 +23,17 @@ rl.prompt();
 rl.on('line', (line) => {
   let command = line.replace(/\s/g, '');
   if (!gameBoard) {
-    gameBoard = theater(command);
-    gridRange = command - 1;
-    rl.setPrompt('\nPlayer ' + player() + ' >>\n' +
-      'Choose the coordinates for your attack salvo —\n' +
-      'two numbers between 0 and ' + gridRange + ' like so: > 5, 3\n' +
-      'Use "peek" to display your game board.\n> ');
+    if (4 < parseInt(command) && parseInt(command) < 14) {
+      gameBoard = theater(command);
+      gridRange = command - 1;
+      rl.setPrompt('\nPlayer ' + player() + ' >>\n' +
+        'Choose the coordinates for your attack salvo —\n' +
+        'two numbers between 0 and ' + gridRange + ' like so: > 5, 3\n' +
+        'Use "peek" to display your game board.\n> ');
+    } else {
+      rl.setPrompt('\nWeird. Let\'s give that another shot.' +
+        'Should be a number between 5 and 13.\n> ');
+    }
   } else {
     switch(true) {
       case /[0-99],[0-99]/.test(command):

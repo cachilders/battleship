@@ -171,7 +171,10 @@ Theater.prototype.fire = function(x, y, player) {
   let offense = this.players[player];
   let defense = this.players[player === 'one' ? 'two' : 'one'];
   let target = defense.placement[y][x];
-  if (offense.plays[y][x] > 0) {
+  let max = defense.placement.length - 1;
+  if ((x > max || x < 0) || (y > max || y < 0)) {
+    return ['Those coordinates could use some work. Try again.', 0];
+  } else if (offense.plays[y][x] > 0) {
     return ['Already Taken. Try again.', 0];
   } else if (target === 0) {
     offense.plays[y][x] = 1; // The shot tracker uses a trinary marker
