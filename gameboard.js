@@ -1,5 +1,4 @@
 function Theater(n) {
-  // this.board = this.nMatrix(n);
   this.fleet = this.setFleet(n);
   this.players = {
     one: {
@@ -72,7 +71,7 @@ Theater.prototype.placeFleet = function(n, fleet) {
     let navigator = [];
     if (field[position[1]][position[0]] > 0) {
       i--;
-    } else if (position[2] === 0) {
+    } else if (position[2] === 0) { // orient horizontally if 0
       if (position[1] - size >= 0) {
         for (let j = size; j > 0; j--) {
           navigator.push([position[1] - j, position[0]]);
@@ -132,7 +131,10 @@ Theater.prototype.format = function(player) {
     '\n';
   for (let i = 0; i < player.plays.length; i++) {
     prettified += '║ ' +
-    player.plays[i].join('  ').replace(/0/g, ' ') +
+    player.plays[i].join('  ')
+      .replace(/0/g, ' ')
+      .replace(/1/g, '⦵')
+      .replace(/2/g, '❌') +
     ' ║ ' +
     player.placement[i].join('  ').replace(/0/g, ' ') +
     ' ║\n';
@@ -162,6 +164,37 @@ Theater.prototype.format = function(player) {
 Theater.prototype.print = function(player) {
   let boards = this.format(this.players[player]);
   console.log(boards);
+  // return boards;
+};
+
+Theater.prototype.fire = function(x, y, player) {
+  let offense = this.players[player];
+  let defense = this.players[player === 'one' ? 'two' : 'one'];
+  let target = defense.placement[y][x];
+  if (offense.plays[y][x] > 0) {
+    return ['Already Taken. Try again.', 0];
+  } else if (target === 0) {
+    offense.plays[y][x] = 1; // The shot tracker uses a trinary marker
+    return ['Miss.', 1];
+  } else if (target > 0) {
+    offense.plays[y][x] = 2; // 0 === Null; 1 === Miss; 2 === Hit
+    let ship = defense.fleet[target - 1];
+    ship[1] -= 1;
+    if (ship[1] > 0) {
+      return ['Hit! Good show!', 1];
+    } else if (defense.fleet.length > 0) {
+      offense.kills.push(ship[0]);
+      defense.fleet = defense.fleet.slice(0, target - 1)
+        .concat(defense.fleet.slice(target));
+      return ['Sunk! Nice, it was a ' + ship[0] + '.', 1];
+    } else {
+      offense.kills.push(ship[0]);
+      defense.fleet = [];
+      return ['Win! You\'ve destroyed the enemy\'s last ship, a ' +
+        ship[0] + '.', 2];
+    }
+  }
+  return ['Check your premises. Something went wrong.', 0];
 };
 
 module.exports = size => new Theater(size);
