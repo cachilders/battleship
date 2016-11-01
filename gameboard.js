@@ -4,14 +4,14 @@ function Theater(n) {
     one: {
       player    : 'One',
       plays     : this.nMatrix(n),
-      kills     : [],
+      kills     : 0,
       fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     },
     two: {
       player    : 'Two',
       plays     : this.nMatrix(n),
-      kills     : [],
+      kills     : 0,
       fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     }
@@ -146,7 +146,7 @@ Theater.prototype.format = function(player) {
     '╣' + '\n' +
     '║ ' +
     'YOUR KILLS: '
-    + player.kills.length +
+    + player.kills +
     '   '.repeat(player.plays.length - 5) +
     ' ║ ' +
     'YOUR SHIPS: '
@@ -187,12 +187,14 @@ Theater.prototype.fire = function(x, y, player) {
     offense.plays[y][x] = 2; // 0 === Null; 1 === Miss; 2 === Hit
     ship[1] -= 1;
     if (ship[1] > 0) {
+      defense.placement[y][x] = '❌';
       return ['Hit! Good show!', 1];
     } else if (defense.fleet.filter(boat => boat[1] > 0).length > 0) {
-      offense.kills = defense.fleet.filter(boat => boat[1] === 0);
+      defense.placement[y][x] = '❌';
+      offense.kills = defense.fleet.filter(boat => boat[1] === 0).length;
       return ['Sunk! Nice, it was a ' + ship[0] + '.', 1];
     } else {
-      offense.kills = defense.fleet.filter(boat => boat[1] === 0);
+      offense.kills = defense.fleet.filter(boat => boat[1] === 0).length;
       this.print(player);
       return ['Win! You\'ve destroyed the enemy\'s last ship, a ' +
         ship[0] + '.', 2];
