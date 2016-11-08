@@ -40,10 +40,10 @@ rl.on('line', (line) => {
     }
   } else if (!gameBoard) {
     if (4 < parseInt(command) && parseInt(command) < 14) {
-      gameBoard = theater(command);
+      gameBoard = theater(command, playerCount);
       gridRange = command - 1;
       rl.setPrompt('\nPlayer ' + player() + ' >>\n' +
-        'Choose the coordinates for your attack salvo —\n' +
+        'Attack the next player by choosing coordinates —\n' +
         'two numbers between 0 and ' + gridRange + ' like so: > 5, 3\n' +
         'Use "peek" to display your game board.\n> ');
     } else {
@@ -67,7 +67,8 @@ rl.on('line', (line) => {
             'You\'re on a streak!. Take another shot.\n> ');
           } else {
             rl.setPrompt('\nPlayer ' + player() + ' >>\n' +
-            'Choose the coordinates for your attack salvo —\n' +
+            'Attack the next player by choosing coordinates —\n' +
+            'two numbers between 0 and ' + gridRange + ' like so: > 5, 3\n' +
             'Use "peek" to display your game board.\n> ');
           }
         }

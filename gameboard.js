@@ -1,29 +1,21 @@
 function Theater(n, playerCount) {
   this.fleet = this.setFleet(n);
-  this.players = { // Make into a function
-    '1': {
-      player    : 1,
-      plays     : this.nMatrix(n),
-      kills     : 0,
-      fleet     : this.setFleet(n),
-      placement : this.placeFleet(n, this.fleet)
-    },
-    '2': {
-      player    : 2,
-      plays     : this.nMatrix(n),
-      kills     : 0,
-      fleet     : this.setFleet(n),
-      placement : this.placeFleet(n, this.fleet)
-    },
-    '3': {
-      player    : 3,
-      plays     : this.nMatrix(n),
-      kills     : 0,
-      fleet     : this.setFleet(n),
-      placement : this.placeFleet(n, this.fleet)
-    },
-  };
+  this.players = this.addPlayers(n, playerCount, this);
 }
+
+Theater.prototype.addPlayers = (n, count, theater) => {
+  let players = {};
+  for (let i = 1; i <= count; i++) {
+    players[i] = {
+      player    : i,
+      plays     : theater.nMatrix(n),
+      kills     : 0,
+      fleet     : theater.setFleet(n),
+      placement : theater.placeFleet(n, theater.fleet)
+    };
+  }
+  return players;
+};
 
 Theater.prototype.nMatrix = (n) => { // Build a matrix (2n)
   let matrix = [];
@@ -217,4 +209,4 @@ Theater.prototype.fire = function(x, y, player, count) { // Actual gameplay. Pro
   }
 };
 
-module.exports = size => new Theater(size);
+module.exports = (size, playerCount) => new Theater(size, playerCount);
