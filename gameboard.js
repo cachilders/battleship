@@ -2,21 +2,21 @@ function Theater(n, playerCount) {
   this.fleet = this.setFleet(n);
   this.players = { // Make into a function
     '1': {
-      player    : '1',
+      player    : 1,
       plays     : this.nMatrix(n),
       kills     : 0,
       fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     },
     '2': {
-      player    : '2',
+      player    : 2,
       plays     : this.nMatrix(n),
       kills     : 0,
       fleet     : this.setFleet(n),
       placement : this.placeFleet(n, this.fleet)
     },
     '3': {
-      player    : '3',
+      player    : 3,
       plays     : this.nMatrix(n),
       kills     : 0,
       fleet     : this.setFleet(n),
@@ -176,13 +176,15 @@ Theater.prototype.print = function(player) { // Just a logging method. Pretty we
 
 Theater.prototype.fire = function(x, y, player, count) { // Actual gameplay. Probably belongs elsewhere, more broken up (Constant)
   let offense = this.players[player];
-  let defense = () => {
-    if (player + 1 <= count) {
-      return this.players[]; // This is where it ended
+  let next = parseInt(player) + 1;
+  let getDefense = () => {
+    if (next <= count) {
+      return this.players[next.toString()]; // This is where it ended
     } else {
       return this.players['1'];
     }
   };
+  let defense = getDefense();
   let max = defense.placement.length - 1;
   let target;
   if ((x > max || x < 0) || (y > max || y < 0)) {
